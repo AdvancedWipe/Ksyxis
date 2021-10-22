@@ -6,13 +6,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.chunk.listener.IChunkStatusListener;
+import net.minecraft.server.level.progress.ChunkProgressListener;
 import ru.vidtu.ksyxis.Ksyxis;
 
 @Mixin(MinecraftServer.class)
 public class MinecraftServerMixin {
 	@Inject(method = "prepareLevels", at = @At("HEAD"), cancellable = true)
-	public void onPrepareLvls(IChunkStatusListener icsl, CallbackInfo ci) {
+	public void onPrepareLvls(ChunkProgressListener cpl, CallbackInfo ci) {
 		Ksyxis.LOG.info("Not the long loadi-");
 		ci.cancel();
 	}
