@@ -1,36 +1,56 @@
-plugins {
-	id 'fabric-loom' version '0.7-SNAPSHOT'
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net' }
+        maven { url = "https://repo.spongepowered.org/maven" }
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath 'org.spongepowered:mixingradle:0.7.+'
+    }
+}
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'eclipse'
+apply plugin: 'org.spongepowered.mixin'
+
+version = '1.0'
+archivesBaseName = 'Ksyxis-Forge1.14thru1.16'
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(8) // Mojang ships Java 8 to end users, so your mod should target Java 8.
+
+println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
+minecraft {
+    mappings channel: 'official', version: '1.16.5'
+    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    runs {
+        client {
+            workingDirectory project.file('run')
+            arg "-mixin.config=ksyxis.mixins.json"
+        }
+        server {
+            workingDirectory project.file('run')
+            arg "-mixin.config=ksyxis.mixins.json"
+        }
+    }
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
-
-archivesBaseName = "Ksyxis"
-version = "1.0"
+mixin {
+    add sourceSets.main, 'ksyxis.refmap.json'
+}
 
 dependencies {
-	minecraft "com.mojang:minecraft:1.16.5"
-    mappings "net.fabricmc:yarn:1.16.5+build.10:v2"
-    modImplementation "net.fabricmc:fabric-loader:0.12.2"
-}
-
-processResources {
-	inputs.property "version", project.version
-	filesMatching("fabric.mod.json") {
-		expand "version": project.version
-	}
-}
-
-tasks.withType(JavaCompile).configureEach {
-	it.options.encoding = "UTF-8"
-	def targetVersion = 8
-	if (JavaVersion.current().isJava9Compatible()) {
-		 it.options.release = targetVersion
-	}
+    minecraft 'net.minecraftforge:forge:1.16.5-36.2.8'
+    annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
 }
 
 jar {
-	from("LICENSE") {
+    manifest {
+        attributes([
+            "Implementation-Version": project.version,
+            "MixinConfigs": "ksyxis.mixins.json"
+        ])
+    }
+    from("LICENSE") {
 		rename { "${it}_${project.archivesBaseName}"}
 	}
 }

@@ -3,6 +3,7 @@
 	"minVersion": "0.8",
 	"package": "ru.vidtu.ksyxis.mixins",
 	"compatibilityLevel": "JAVA_8",
+	"refmap": "ksyxis.refmap.json",
 	"mixins": [
 		"MinecraftServerMixin"
 	],
